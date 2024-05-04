@@ -235,11 +235,10 @@ def main():
                 cart_count = (filtered_df['Purchased By'] == 'Cart').sum()
                 comc_count = (filtered_df['Purchased By'] != 'eBay')[filtered_df['Purchased By'] != 'Cart'].sum()  # Assuming anything other than eBay or Cart is Comc
 
-
                 # Displaying the sums using Streamlit
-                st.write("Sum of Purchase Price for eBay:", ebay_count)
-                st.write("Sum of Purchase Price for Cart:", cart_count)
-                st.write("Sum of Purchase Price for COMC Sellers:", comc_count)
+                st.write("Count of Cards Sold on eBay:", ebay_count)
+                st.write("Count of Cards Sold by Cart:", cart_count)
+                st.write("Count of Cards Sold to COMC Sellers:", comc_count)
 
 
 
