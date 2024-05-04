@@ -292,45 +292,47 @@ def main():
 
         st.header("Advanced Profit by Quantile")
         # Group by 'Sport' and calculate deciles
-        deciles = new_data_df.groupby('Sport')['Profit'].quantile([0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]).unstack()
+        profit_deciles = new_data_df.groupby('Sport')['Profit'].quantile([0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]).unstack()
         # Reset index for better presentation
-        deciles.reset_index(inplace=True)
+        profit_deciles.reset_index(inplace=True)
         # Rename columns for clarity
-        deciles.columns = ['Sport', '10%', '20%', '30%', '40%', '50%', '60%', '70%', '80%', '90%']
+        profit_deciles.columns = ['Sport', '10%', '20%', '30%', '40%', '50%', '60%', '70%', '80%', '90%']
+        profit_deciles = profit_deciles.round(2)
         # Display the deciles
-        st.dataframe(deciles, width=1000, height=700)
+        st.dataframe(profit_deciles, width=1000, height=700)
 
         st.header("Days to Sale by Quantile")
         # Group by 'Sport' and calculate deciles
-        deciles = new_data_df.groupby('Sport')['Days to sale'].quantile([0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]).unstack()
+        dts_deciles = new_data_df.groupby('Sport')['Days to sale'].quantile([0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]).unstack()
         # Reset index for better presentation
-        deciles.reset_index(inplace=True)
+        dts_deciles.reset_index(inplace=True)
         # Rename columns for clarity
-        deciles.columns = ['Sport', '10%', '20%', '30%', '40%', '50%', '60%', '70%', '80%', '90%']
+        dts_deciles.columns = ['Sport', '10%', '20%', '30%', '40%', '50%', '60%', '70%', '80%', '90%']
+        dts_deciles = dts_deciles.round(2)
         # Display the deciles
-        st.dataframe(deciles, width=1000, height=700)
+        st.dataframe(dts_deciles, width=1000, height=700)
 
         st.header("Markup by Quantile")
         # Group by 'Sport' and calculate deciles
-        deciles = new_data_df.groupby('Sport')['Markup'].quantile([0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]).unstack()
+        markup_deciles = new_data_df.groupby('Sport')['Markup'].quantile([0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]).unstack()
         # Reset index for better presentation
-        deciles.reset_index(inplace=True)
+        markup_deciles.reset_index(inplace=True)
         # Rename columns for clarity
-        deciles.columns = ['Sport', '10%', '20%', '30%', '40%', '50%', '60%', '70%', '80%', '90%']
+        markup_deciles.columns = ['Sport', '10%', '20%', '30%', '40%', '50%', '60%', '70%', '80%', '90%']
+        markup_deciles = profit_deciles.round(2)
         # Display the deciles
-        st.dataframe(deciles, width=1000, height=700)
+        st.dataframe(markup_deciles, width=1000, height=700)
 
         st.header("Annualized Return by Quantile")
         # Group by 'Sport' and calculate deciles
-        deciles = new_data_df.groupby('Sport')['Annualized Return'].quantile([0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]).unstack()
+        ar_deciles = new_data_df.groupby('Sport')['Annualized Return'].quantile([0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]).unstack()
         # Reset index for better presentation
-        deciles.reset_index(inplace=True)
+        ar_deciles.reset_index(inplace=True)
         # Rename columns for clarity
-        deciles.columns = ['Sport', '10%', '20%', '30%', '40%', '50%', '60%', '70%', '80%', '90%']
+        ar_deciles.columns = ['Sport', '10%', '20%', '30%', '40%', '50%', '60%', '70%', '80%', '90%']
+        profit_deciles = profit_deciles.round(2)
         # Display the deciles
-        st.dataframe(deciles, width=1000, height=700)
-
-
+        st.dataframe(ar_deciles, width=1000, height=700)
 
 if __name__ == "__main__":
     main()
