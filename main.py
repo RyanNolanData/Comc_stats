@@ -235,6 +235,7 @@ def main():
                 cart_count = (filtered_df['Purchased By'] == '*Cart*').sum()
                 comc_count = (filtered_df['Purchased By'] != 'eBay')[filtered_df['Purchased By'] != 'Cart'].sum()  # Assuming anything other than eBay or Cart is Comc
 
+
                 # Displaying the sums using Streamlit
                 st.write("Count of Cards Sold on eBay:", ebay_count)
                 st.write("Count of Cards Sold by Cart:", cart_count)
@@ -318,7 +319,7 @@ def main():
         markup_deciles.reset_index(inplace=True)
         # Rename columns for clarity
         markup_deciles.columns = ['Sport', '10%', '20%', '30%', '40%', '50%', '60%', '70%', '80%', '90%']
-        markup_deciles = profit_deciles.round(2)
+        markup_deciles = markup_deciles.round(2)
         # Display the deciles
         st.dataframe(markup_deciles, width=1000, height=700)
 
@@ -329,7 +330,7 @@ def main():
         ar_deciles.reset_index(inplace=True)
         # Rename columns for clarity
         ar_deciles.columns = ['Sport', '10%', '20%', '30%', '40%', '50%', '60%', '70%', '80%', '90%']
-        profit_deciles = profit_deciles.round(2)
+        ar_deciles = ar_deciles.round(2)
         # Display the deciles
         st.dataframe(ar_deciles, width=1000, height=700)
 
