@@ -3,6 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import re
 from datetime import datetime, timedelta
+import seaborn as sns
 
 st.set_page_config(layout="wide")
 
@@ -17,6 +18,7 @@ def main():
     st.title("COMC Seller Stats Expanded")
 
     st.write('Welcome to the COMC Seller Stats Breakdown app. This was created by Ryan Nolan (Breakout Cards / Ryan Nolan Data on YouTube)')
+    st.write("This App is Free. If you want to help support it, please consider buying a card from my [COMC store](https://www.comc.com/Users/breakoutsports,sr,i100)")
     st.write('Upload your Spreadsheets down below to get started. I do not store any of this data. The code behind this app is on my Github page')
     st.write('Looking to have some data analyzed for your business? Or Need help with a Data Project? I take on Freelance work. Email me at ryannolandata@gmail.com (Also open to full time job opportunities)')
 
@@ -31,7 +33,7 @@ def main():
    #         df = pd.read_excel(file, engine='openpyxl')
 
             # Show date range selector
-            st.title("Date Range Selector")
+            st.title("Sold Date Range Selector")
             date_range_option = st.selectbox("Select Date Range", ["Custom", "Last 7 Days", "Last 30 Days", "Last 90 Days", "Last 180 Days"])
             
             if date_range_option == "Custom":
@@ -57,9 +59,35 @@ def main():
                             (pd.to_datetime(df['Date Sold']).dt.date <= end_date)]
             
 
+            st.title("Aquired Date Range Selector")
+            date_range_option = st.selectbox("Select Acquired Date Range", ["Custom", "Last 7 Days", "Last 30 Days", "Last 90 Days", "Last 180 Days"], key='Sales_Date')
+            
+            if date_range_option == "Custom":
+                min_date_acq = pd.to_datetime(df['Acquisition Date']).min().date()
+                max_date_acq = pd.to_datetime(df['Acquisition Date']).max().date()
+                start_date_acq = st.date_input("Start Date", min_value=min_date_acq, max_value=max_date_acq, value=min_date_acq)
+                end_date_acq = st.date_input("End Date", min_value=min_date_acq, max_value=max_date_acq, value=max_date_acq)
+            elif date_range_option == "Last 7 Days":
+                end_date_acq = datetime.now().date()
+                start_date_acq = end_date_acq - timedelta(days=6)
+            elif date_range_option == "Last 30 Days":
+                end_date_acq = datetime.now().date()
+                start_date_acq = end_date_acq - timedelta(days=29)
+            elif date_range_option == "Last 90 Days":
+                end_date_acq = datetime.now().date()
+                start_date_acq = end_date_acq - timedelta(days=89)
+            elif date_range_option == "Last 180 Days":
+                end_date_acq = datetime.now().date()
+                start_date_acq = end_date_acq - timedelta(days=179)
+
+            # Filter dataframe by selected date range
+            filtered_df = df[(pd.to_datetime(df['Acquisition Date']).dt.date >= start_date_acq) & 
+                            (pd.to_datetime(df['Acquisition Date']).dt.date <= end_date_acq)]
+            
+
 
             st.title("Sales Price Selector")
-            sales_price_option = st.selectbox("Select Sales Price Range", ["Custom", "Under 39 Cents", "Under 75 Cents", "Under $2.51", "Over $2.50"])
+            sales_price_option = st.selectbox("Select Sales Price Range", ["Custom", "Under 39 Cents", "Under 75 Cents", "Under $2.51", "Over $2.50"], key='Acquired_Date')
 
             if sales_price_option == "Custom":
                 min_price = 0.01
@@ -212,8 +240,6 @@ def main():
                         st.write("No years found in the dataset.")
                 else:
                     st.write("No 'Set Name' column found in the dataset.")
-
-
 
             with col6:
                 st.title("Quick Stats")
