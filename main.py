@@ -1,3 +1,8 @@
+#Changelog 1
+#added multiple spreadsheets
+#comc users instead of sellers
+#top selling players - Maybe group by sport in the future?
+
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -13,6 +18,15 @@ def extract_year(set_name):
         return int(match.group())
     else:
         return None
+
+def extract_name(description):
+    # Remove text inside parentheses
+    description = re.sub(r'\s*\(.*?\)\s*', '', description)
+    # Take the part after hyphen if exists
+    if '-' in description:
+        description = description.split('-')[-1].strip()
+    return description.strip()
+
 
 def main():
     st.title("COMC Seller Stats Expanded")
@@ -271,14 +285,24 @@ def main():
                 # Displaying the sums using Streamlit
             st.write("Count of Cards Sold on eBay:", ebay_count)
             st.write("Count of Cards Sold by Cart:", cart_count)
-            st.write("Count of Cards Sold to COMC Sellers:", comc_count)
-
-
-
-
+            st.write("Count of Cards Sold to COMC Users:", comc_count)
             st.write("Average purchase price of Flip Cards:", round(avg_purchase_price, 2))
 
-                #show data or a tbale for each sport
+
+        df['Name'] = df['Description'].apply(extract_name)
+
+        # Count the occurrences of each name
+        name_counts = df['Name'].value_counts()
+
+        # Limit the results to the top 10 names
+        top_10_names = name_counts.head(10).reset_index()
+        top_10_names.columns = ['Name', 'Count']
+
+        top_10_names.index = top_10_names.index.rename('Rank') + 1
+
+        # Streamlit display
+        st.title("Top 10 Selling Players")
+        st.table(top_10_names)  # Display without the index
 
         #New Dataframe Created
         st.header("Stats Breakdown")
@@ -368,11 +392,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-
-
-#I’d like to see correlation between buy and sell and purchase price and time to sell
-#I’d like to see sales / profit / time to sell expressed as deciles.  Example 80% of profit came from what purchase price?  Which sale price?  How many days to sell? Etc
-#So a table with deciles 10%, 20%, 30% etc 
-#No.  I was going to mention that I’d like a separate tabe for submitted cards, using the processing fee as cost basis.
