@@ -281,90 +281,90 @@ def main():
                 #show data or a tbale for each sport
 
         #New Dataframe Created
-    st.header("Stats Breakdown")
-    st.write("The assumption on purchase price is 0.5 per card listed to the site for cards not flipped, 2 for any over 99")
-    st.write("This also does not factor in storeage fees at the moment")
+        st.header("Stats Breakdown")
+        st.write("The assumption on purchase price is 0.5 per card listed to the site for cards not flipped, 2 for any over 99")
+        st.write("This also does not factor in storeage fees at the moment")
 
-    new_data_df = filtered_df
-
-
-    new_data_df['Purchase Price'].fillna(new_data_df['Sale Price'].apply(lambda x: 2 if x > 99 else 0.5), inplace=True)
-
-        #Profit (comc credit-cost)
-    new_data_df['Profit'] = new_data_df['COMC Credit'] - new_data_df['Purchase Price'] 
-
-        #Markup (sale price-purchase)/purchase
-    new_data_df['Markup'] = 100 * (new_data_df['Sale Price'] - new_data_df['Purchase Price']) / new_data_df['Purchase Price'] 
-
-        #Days to sale
-    new_data_df['Date Sold'] = pd.to_datetime(new_data_df['Date Sold'], format='%m/%d/%Y %I:%M:%S %p')
-    new_data_df['Acquisition Date'] = pd.to_datetime(new_data_df['Acquisition Date'], format='%m/%d/%Y %I:%M:%S %p')
+        new_data_df = filtered_df
 
 
-        # Calculating the difference and converting it to days
-    new_data_df['Days to sale'] = (new_data_df['Date Sold'] - new_data_df['Acquisition Date']).dt.days
+        new_data_df['Purchase Price'].fillna(new_data_df['Sale Price'].apply(lambda x: 2 if x > 99 else 0.5), inplace=True)
 
-    new_data_df['Annualized Return'] = ((new_data_df['Sale Price'] - new_data_df['Purchase Price']) / new_data_df['Purchase Price']) * (365 / new_data_df['Days to sale']) * 100
+            #Profit (comc credit-cost)
+        new_data_df['Profit'] = new_data_df['COMC Credit'] - new_data_df['Purchase Price'] 
+
+            #Markup (sale price-purchase)/purchase
+        new_data_df['Markup'] = 100 * (new_data_df['Sale Price'] - new_data_df['Purchase Price']) / new_data_df['Purchase Price'] 
+
+            #Days to sale
+        new_data_df['Date Sold'] = pd.to_datetime(new_data_df['Date Sold'], format='%m/%d/%Y %I:%M:%S %p')
+        new_data_df['Acquisition Date'] = pd.to_datetime(new_data_df['Acquisition Date'], format='%m/%d/%Y %I:%M:%S %p')
 
 
-        #grouped_df = new_data_df.groupby('Sport').agg({'Profit': 'sum', 'Markup': 'median', 'Days to sale': 'median'})
-    grouped_df = new_data_df.groupby('Sport').agg({'Profit': 'sum',
-                                    'Markup': 'median',
-                                    'Days to sale': 'median',
-                                    'Annualized Return': 'median',
-                                    'Sale Price': ['sum', 'count']})
-        
-    grouped_df.columns = ['Profit_sum', 'Markup_median', 'Days_to_sale_median', 'Annualized_Return_median', 'Total_sales_amount', 'Sales_count']
-    grouped_df = grouped_df[['Profit_sum', 'Total_sales_amount', 'Sales_count', 'Markup_median', 'Days_to_sale_median', 'Annualized_Return_median']]
+            # Calculating the difference and converting it to days
+        new_data_df['Days to sale'] = (new_data_df['Date Sold'] - new_data_df['Acquisition Date']).dt.days
 
-    grouped_df = grouped_df.round(2)
-    grouped_df_sorted = grouped_df.sort_values(by='Profit_sum', ascending=False)
+        new_data_df['Annualized Return'] = ((new_data_df['Sale Price'] - new_data_df['Purchase Price']) / new_data_df['Purchase Price']) * (365 / new_data_df['Days to sale']) * 100
 
-    st.dataframe(grouped_df_sorted, width=1000, height=700)
 
-    st.header("Advanced Profit by Quantile")
-        # Group by 'Sport' and calculate deciles
-    profit_deciles = new_data_df.groupby('Sport')['Profit'].quantile([0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]).unstack()
-        # Reset index for better presentation
-    profit_deciles.reset_index(inplace=True)
-        # Rename columns for clarity
-    profit_deciles.columns = ['Sport', '10%', '20%', '30%', '40%', '50%', '60%', '70%', '80%', '90%']
-    profit_deciles = profit_deciles.round(2)
-        # Display the deciles
-    st.dataframe(profit_deciles, width=1000, height=700)
+            #grouped_df = new_data_df.groupby('Sport').agg({'Profit': 'sum', 'Markup': 'median', 'Days to sale': 'median'})
+        grouped_df = new_data_df.groupby('Sport').agg({'Profit': 'sum',
+                                        'Markup': 'median',
+                                        'Days to sale': 'median',
+                                        'Annualized Return': 'median',
+                                        'Sale Price': ['sum', 'count']})
+            
+        grouped_df.columns = ['Profit_sum', 'Markup_median', 'Days_to_sale_median', 'Annualized_Return_median', 'Total_sales_amount', 'Sales_count']
+        grouped_df = grouped_df[['Profit_sum', 'Total_sales_amount', 'Sales_count', 'Markup_median', 'Days_to_sale_median', 'Annualized_Return_median']]
 
-    st.header("Days to Sale by Quantile")
-        # Group by 'Sport' and calculate deciles
-    dts_deciles = new_data_df.groupby('Sport')['Days to sale'].quantile([0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]).unstack()
-        # Reset index for better presentation
-    dts_deciles.reset_index(inplace=True)
-        # Rename columns for clarity
-    dts_deciles.columns = ['Sport', '10%', '20%', '30%', '40%', '50%', '60%', '70%', '80%', '90%']
-    dts_deciles = dts_deciles.round(2)
-        # Display the deciles
-    st.dataframe(dts_deciles, width=1000, height=700)
+        grouped_df = grouped_df.round(2)
+        grouped_df_sorted = grouped_df.sort_values(by='Profit_sum', ascending=False)
 
-    st.header("Markup by Quantile")
-        # Group by 'Sport' and calculate deciles
-    markup_deciles = new_data_df.groupby('Sport')['Markup'].quantile([0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]).unstack()
-        # Reset index for better presentation
-    markup_deciles.reset_index(inplace=True)
-        # Rename columns for clarity
-    markup_deciles.columns = ['Sport', '10%', '20%', '30%', '40%', '50%', '60%', '70%', '80%', '90%']
-    markup_deciles = markup_deciles.round(2)
-        # Display the deciles
-    st.dataframe(markup_deciles, width=1000, height=700)
+        st.dataframe(grouped_df_sorted, width=1000, height=700)
 
-    st.header("Annualized Return by Quantile")
-        # Group by 'Sport' and calculate deciles
-    ar_deciles = new_data_df.groupby('Sport')['Annualized Return'].quantile([0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]).unstack()
-        # Reset index for better presentation
-    ar_deciles.reset_index(inplace=True)
-        # Rename columns for clarity
-    ar_deciles.columns = ['Sport', '10%', '20%', '30%', '40%', '50%', '60%', '70%', '80%', '90%']
-    ar_deciles = ar_deciles.round(2)
-        # Display the deciles
-    st.dataframe(ar_deciles, width=1000, height=700)
+        st.header("Advanced Profit by Quantile")
+            # Group by 'Sport' and calculate deciles
+        profit_deciles = new_data_df.groupby('Sport')['Profit'].quantile([0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]).unstack()
+            # Reset index for better presentation
+        profit_deciles.reset_index(inplace=True)
+            # Rename columns for clarity
+        profit_deciles.columns = ['Sport', '10%', '20%', '30%', '40%', '50%', '60%', '70%', '80%', '90%']
+        profit_deciles = profit_deciles.round(2)
+            # Display the deciles
+        st.dataframe(profit_deciles, width=1000, height=700)
+
+        st.header("Days to Sale by Quantile")
+            # Group by 'Sport' and calculate deciles
+        dts_deciles = new_data_df.groupby('Sport')['Days to sale'].quantile([0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]).unstack()
+            # Reset index for better presentation
+        dts_deciles.reset_index(inplace=True)
+            # Rename columns for clarity
+        dts_deciles.columns = ['Sport', '10%', '20%', '30%', '40%', '50%', '60%', '70%', '80%', '90%']
+        dts_deciles = dts_deciles.round(2)
+            # Display the deciles
+        st.dataframe(dts_deciles, width=1000, height=700)
+
+        st.header("Markup by Quantile")
+            # Group by 'Sport' and calculate deciles
+        markup_deciles = new_data_df.groupby('Sport')['Markup'].quantile([0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]).unstack()
+            # Reset index for better presentation
+        markup_deciles.reset_index(inplace=True)
+            # Rename columns for clarity
+        markup_deciles.columns = ['Sport', '10%', '20%', '30%', '40%', '50%', '60%', '70%', '80%', '90%']
+        markup_deciles = markup_deciles.round(2)
+            # Display the deciles
+        st.dataframe(markup_deciles, width=1000, height=700)
+
+        st.header("Annualized Return by Quantile")
+            # Group by 'Sport' and calculate deciles
+        ar_deciles = new_data_df.groupby('Sport')['Annualized Return'].quantile([0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]).unstack()
+            # Reset index for better presentation
+        ar_deciles.reset_index(inplace=True)
+            # Rename columns for clarity
+        ar_deciles.columns = ['Sport', '10%', '20%', '30%', '40%', '50%', '60%', '70%', '80%', '90%']
+        ar_deciles = ar_deciles.round(2)
+            # Display the deciles
+        st.dataframe(ar_deciles, width=1000, height=700)
 
 if __name__ == "__main__":
     main()
