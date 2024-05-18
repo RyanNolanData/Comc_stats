@@ -279,7 +279,7 @@ def main():
                 # Grouping by 'Purchased By' column and summing based on conditions
             ebay_count = (filtered_df['Purchased By'] == 'eBay').sum()
             cart_count = (filtered_df['Purchased By'] == '*Cart*').sum()
-            comc_count = (filtered_df['Purchased By'] != 'eBay')[filtered_df['Purchased By'] != 'Cart'].sum()  # Assuming anything other than eBay or Cart is Comc
+            comc_count = (~filtered_df['Purchased By'].isin(['eBay', '*Cart*'])).sum()  # Assuming anything other than eBay or Cart is Comc
 
 
                 # Displaying the sums using Streamlit
